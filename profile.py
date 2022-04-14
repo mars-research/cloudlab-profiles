@@ -22,7 +22,8 @@ node_0.addService(pg.Execute(shell="sh", command="/local/repository/ksplit-top.s
 # Spawn node1
 node_1 = request.RawPC('node-1')
 node_1.hardware_type = 'c220g2'
-node_1.disk_image = 'urn:publicid:IDN+wisc.cloudlab.us+image+redshift-PG0:ksplit-eval-test-nd'
+# on the other node, a standard image should do
+node_1.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU18-64-STD'
 
 link1 = request.Link(members = [node_0,node_1])
 
