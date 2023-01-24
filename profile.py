@@ -12,11 +12,11 @@ pc = portal.Context()
 request = pc.makeRequestRSpec()
 
 node_0 = request.RawPC('node-0')
-node_0.hardware_type = 'c220g2'
-node_0.disk_image = 'urn:publicid:IDN+wisc.cloudlab.us+image+redshift-PG0:ksplit-eval-test-nd'
+node_0.hardware_type = 'c6420'
+node_0.disk_image = 'urn:publicid:IDN+emulab.net+image+emulab-ops:UBUNTU20-64-STD'
 
 # Install and execute a script that is contained in the repository.
-node_0.addService(pg.Execute(shell="sh", command="/local/repository/ksplit-top.sh"))
+node_0.addService(pg.Execute(shell="sh", command="/local/repository/kvstore-top.sh"))
 
 # Print the generated rspec
 pc.printRequestRSpec(request)
