@@ -104,35 +104,57 @@ clone_kvstore() {
   if [ ! -d ${MOUNT_DIR}/kvstore ]; then
     record_log "Cloning kvstore..."
     pushd ${MOUNT_DIR}
-    git clone https://github.com/mars-research/kvstore --recursive
+    git clone git@github.com:mars-research/kvstore --recursive
     popd;
   else
     record_log "kvstore dir not empty! skipping..."
   fi
 }
 
+clone_chtkc() {
+  if [ ! -d ${MOUNT_DIR}/chtkc ]; then
+    record_log "Cloning chtkc..."
+    pushd ${MOUNT_DIR}
+    git clone https://github.com/mars-research/chtkc.git --branch kmer-eval
+    popd;
+  else
+    record_log "chtkc dir not empty! skipping..."
+  fi
+}
+
+
 clone_repos() {
-  clone_incrementer;
-  clone_kvstore;
+  clone_incrementer
+  clone_kvstore
+  clone_chtkc
 }
 
 ## Build
 build_incrementer() {
   record_log "Building incrementer"
   pushd ${MOUNT_DIR}/incrementer
-  mkdir -p build && cd build;
-  cmake .. && make -j $(nproc)
+  nix-shell -p cmake gnumake --command "mkdir -p build && cd build; cmake .. && make -j $(nproc)"
+  popd
 }
 
 build_kvstore() {
   record_log "Building kvstore"
   pushd ${MOUNT_DIR}/kvstore
   nix-shell --command "mkdir -p build && cd build; cmake .. && make -j $(nproc)"
+  popd
+}
+
+build_chtkc() {
+  record_log "Building chtkc"
+  pushd ${MOUNT_DIR}/chtkc
+  nix-shell -p cmake gnumake zlib --command "mkdir -p build && cd build; cmake .. && make -j $(nproc)"
+  popd
 }
 
 build_all() {
   build_incrementer;
   build_kvstore;
+  build_chtkc;
 }
 
 prepare_machine;
