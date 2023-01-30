@@ -7,6 +7,8 @@ LOG_FILE=${HOME}/kvstore-setup.log
 LLVM_VERSION=10
 NIX_DAEMON_VARS="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 NIX_NO_DAEMON_VARS="$HOME/.nix-profile/etc/profile.d/nix.sh"
+DATASET_DIR=${MOUNT_DIR}/kmer_dataset
+SRA_HOME=${MOUNT_DIR}/sratoolkit
 
 USER=${SUDO_USER}
 
@@ -122,11 +124,44 @@ clone_chtkc() {
   fi
 }
 
+download_datasets() {
+  mkdir -p ${DATASET_DIR}
+
+  pushd ${DATASET_DIR}
+  if [ ! -f "ERR4846928" ]; then
+    wget https://sra-pub-run-odp.s3.amazonaws.com/sra/ERR4846928/ERR4846928
+  fi
+
+  if [ ! -f "SRR1513870" ]; then
+    wget https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR1513870/SRR1513870
+  fi
+
+  echo "4b358e9879d9dd76899bf0da3b271e2d7250908863cf5096baeaea6587f3e31e ERR4846928" > SHA256SUMS
+  echo "5656e982ec7cad80348b1fcd9ab64c5cab0f0a0563f69749a9f7c448569685c1 SRR1513870" >> SHA256SUMS
+
+  sha256sum -c SHA256SUMS
+  if [ $? -ne 0 ]; then
+    echo "Downloaded files likely corrupted!"
+  fi
+  popd
+}
+
+download_sratooklit() {
+  pushd ${MOUNT_DIR}
+  wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz
+
+  mkdir -p ${SRA_HOME}
+  tar xvf sratoolkit.current-ubuntu64.tar.gz -C ${SRA_HOME} --strip-components=1
+  rm sratoolkit.current-ubuntu64.tar.gz
+  popd
+}
 
 clone_repos() {
   clone_incrementer
   clone_kvstore
   clone_chtkc
+  download_datasets
+  download_sratoolkit
 }
 
 ## Build
@@ -151,10 +186,24 @@ build_chtkc() {
   popd
 }
 
+process_fastq() {
+  record_log "Processing fastq files"
+  pushd ${DATASET_DIR}
+  source ${MOUNT_DIR}/chtkc/run_chtkc.sh
+  for file in ${DATASET_ARRAY[@]}; do
+    if [[ ! -f ${file} ]]; then
+      SRA_FILE=$(echo ${file} | cut -d'.' -f1)
+      ${SRA_HOME}/bin/fastq-dump ${SRA_FILE}
+    fi
+  done
+  popd
+}
+
 build_all() {
   build_incrementer;
   build_kvstore;
   build_chtkc;
+  process_fastq
 }
 
 prepare_machine;
