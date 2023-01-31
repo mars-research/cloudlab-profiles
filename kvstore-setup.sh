@@ -206,7 +206,13 @@ build_all() {
   process_fastq
 }
 
+setup_system() {
+  record_log "Running setup scripts"
+  sudo ${MOUNT_DIR}/kvstore/scripts/min-setup.sh
+}
+
 prepare_machine;
 clone_repos;
 build_all;
+setup_system;
 record_log "Done Setting up!"
