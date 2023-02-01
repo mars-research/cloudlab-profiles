@@ -124,22 +124,32 @@ clone_chtkc() {
   fi
 }
 
+declare -A DATASETS
+
+DATASETS["dmela"]=${DATASET_DIR}/ERR4846928.fastq
+DATASETS["fvesca"]=${DATASET_DIR}/SRR1513870.fastq
+
 download_datasets() {
   mkdir -p ${DATASET_DIR}
-
   pushd ${DATASET_DIR}
-  if [ ! -f "ERR4846928" ]; then
-    wget https://sra-pub-run-odp.s3.amazonaws.com/sra/ERR4846928/ERR4846928
-  fi
 
-  if [ ! -f "SRR1513870" ]; then
-    wget https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR1513870/SRR1513870
-  fi
+  for file in ${DATASETS[@]}; do
+    RAW_FILE=$(echo ${file} | cut -d'.' -f1)
+    LOC=$(echo ${RAW_FILE} | awk -F'/' '{ print $NF }')
 
-  echo "4b358e9879d9dd76899bf0da3b271e2d7250908863cf5096baeaea6587f3e31e ERR4846928" > SHA256SUMS
-  echo "5656e982ec7cad80348b1fcd9ab64c5cab0f0a0563f69749a9f7c448569685c1 SRR1513870" >> SHA256SUMS
+    if [ ! -f ${RAW_FILE} ]; then
+      record_log "Downloading ${LOC} dataset"
+      wget https://sra-pub-run-odp.s3.amazonaws.com/sra/${LOC}/${LOC}
+    fi
+  done
+
+  if [ ! -f "SHA256SUMS" ]; then
+    echo "4b358e9879d9dd76899bf0da3b271e2d7250908863cf5096baeaea6587f3e31e ERR4846928" > SHA256SUMS
+    echo "5656e982ec7cad80348b1fcd9ab64c5cab0f0a0563f69749a9f7c448569685c1 SRR1513870" >> SHA256SUMS
+  fi
 
   sha256sum -c SHA256SUMS
+
   if [ $? -ne 0 ]; then
     echo "Downloaded files likely corrupted!"
   fi
@@ -148,11 +158,17 @@ download_datasets() {
 
 download_sratooklit() {
   pushd ${MOUNT_DIR}
-  wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz
 
-  mkdir -p ${SRA_HOME}
-  tar xvf sratoolkit.current-ubuntu64.tar.gz -C ${SRA_HOME} --strip-components=1
-  rm sratoolkit.current-ubuntu64.tar.gz
+  if [ ! -d ${SRA_HOME} ]; then
+    mkdir -p ${SRA_HOME}
+    record_log "Downloading SRA toolkit."
+
+    wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz
+
+    tar xvf sratoolkit.current-ubuntu64.tar.gz -C ${SRA_HOME} --strip-components=1
+    rm sratoolkit.current-ubuntu64.tar.gz
+  fi
+
   popd
 }
 
@@ -189,11 +205,10 @@ build_chtkc() {
 process_fastq() {
   record_log "Processing fastq files"
   pushd ${DATASET_DIR}
-  source ${MOUNT_DIR}/chtkc/run_chtkc.sh
-  for file in ${DATASET_ARRAY[@]}; do
+  for file in ${DATASETS[@]}; do
     if [[ ! -f ${file} ]]; then
-      SRA_FILE=$(echo ${file} | cut -d'.' -f1)
-      ${SRA_HOME}/bin/fastq-dump ${SRA_FILE}
+      RAW_FILE=$(echo ${file} | cut -d'.' -f1)
+      ${SRA_HOME}/bin/fastq-dump ${RAW_FILE}
     fi
   done
   popd
