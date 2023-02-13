@@ -156,7 +156,7 @@ download_datasets() {
   popd
 }
 
-download_sratooklit() {
+download_sratoolkit() {
   pushd ${MOUNT_DIR}
 
   if [ ! -d ${SRA_HOME} ]; then
