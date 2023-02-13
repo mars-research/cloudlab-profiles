@@ -106,7 +106,7 @@ clone_kvstore() {
   if [ ! -d ${MOUNT_DIR}/kvstore ]; then
     record_log "Cloning kvstore..."
     pushd ${MOUNT_DIR}
-    git clone git@github.com:mars-research/kvstore --recursive
+    git clone https://github.com/mars-research/kvstore --recursive
     popd;
   else
     record_log "kvstore dir not empty! skipping..."
