@@ -27,10 +27,14 @@ record_log() {
 }
 
 install_nix_daemon() {
-  sh <(curl -L https://nixos.org/nix/install) --daemon
-  if [ -f ${NIX_DAEMON_VARS} ]; then
-    echo "sourcing ${NIX_DAEMON_VARS}"
-    source ${NIX_DAEMON_VARS}
+  if [ ! -x "$(command -v nix-channel)" ]; then
+    sh <(curl -L https://nixos.org/nix/install) --daemon
+    if [ -f ${NIX_DAEMON_VARS} ]; then
+      echo "sourcing ${NIX_DAEMON_VARS}"
+      source ${NIX_DAEMON_VARS}
+    fi
+  else
+    record_log "Nix already installed!";
   fi
 }
 
