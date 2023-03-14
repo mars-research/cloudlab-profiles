@@ -2,8 +2,8 @@
 
 set -eo pipefail
 
-MOUNT_DIR=/opt/kvstore
-LOG_FILE=${HOME}/kvstore-setup.log
+MOUNT_DIR=/opt/dramhit
+LOG_FILE=${HOME}/dramhit-setup.log
 LLVM_VERSION=10
 NIX_DAEMON_VARS="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 NIX_NO_DAEMON_VARS="$HOME/.nix-profile/etc/profile.d/nix.sh"
@@ -99,21 +99,21 @@ clone_incrementer() {
   if [ ! -d ${MOUNT_DIR}/incrementer ]; then
     record_log "Cloning incrementer"
     pushd ${MOUNT_DIR}
-    git clone https://github.com/daviddetweiler/incrementer
+    git clone https://github.com/mars-research/dramhit-incrementer
     popd;
   else
     record_log "incrementer dir not empty! skipping..."
   fi
 }
 
-clone_kvstore() {
-  if [ ! -d ${MOUNT_DIR}/kvstore ]; then
-    record_log "Cloning kvstore..."
+clone_dramhit() {
+  if [ ! -d ${MOUNT_DIR}/dramhit ]; then
+    record_log "Cloning dramhit..."
     pushd ${MOUNT_DIR}
-    git clone https://github.com/mars-research/kvstore --recursive
+    git clone https://github.com/mars-research/dramhit --recursive
     popd;
   else
-    record_log "kvstore dir not empty! skipping..."
+    record_log "dramhit dir not empty! skipping..."
   fi
 }
 
@@ -178,7 +178,7 @@ download_sratoolkit() {
 
 clone_repos() {
   clone_incrementer
-  clone_kvstore
+  clone_dramhit
   clone_chtkc
   download_datasets
   download_sratoolkit
@@ -192,9 +192,9 @@ build_incrementer() {
   popd
 }
 
-build_kvstore() {
-  record_log "Building kvstore"
-  pushd ${MOUNT_DIR}/kvstore
+build_dramhit() {
+  record_log "Building dramhit"
+  pushd ${MOUNT_DIR}/dramhit
   nix-shell --command "mkdir -p build && cd build; cmake .. && make -j $(nproc)"
   popd
 }
@@ -220,14 +220,14 @@ process_fastq() {
 
 build_all() {
   build_incrementer;
-  build_kvstore;
+  build_dramhit;
   build_chtkc;
   process_fastq
 }
 
 setup_system() {
   record_log "Running setup scripts"
-  sudo ${MOUNT_DIR}/kvstore/scripts/min-setup.sh
+  sudo ${MOUNT_DIR}/dramhit/scripts/min-setup.sh
 }
 
 prepare_machine;
