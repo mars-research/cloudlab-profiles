@@ -62,6 +62,7 @@ create_extfs() {
 mountfs() {
   sudo mkdir -p ${MOUNT_DIR}
   sudo mount -t ext4 /dev/sda4 ${MOUNT_DIR}
+  sudo mount -t ext4 /dev/sda4 /nix 
 
   if [[ $? != 0 ]]; then
     record_log "Partition might be corrupted"
@@ -234,4 +235,7 @@ prepare_machine;
 clone_repos;
 build_all;
 setup_system;
+
+sudo ln -s $(which nix-store) /usr/local/bin/nix-store
+export TERM=linux
 record_log "Done Setting up!"
