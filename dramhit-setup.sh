@@ -56,7 +56,6 @@ install_dependencies() {
 
 create_extfs() {
   record_log "Creating ext4 filesystem on /dev/sda4"
-  sudo resize2fs /dev/sda1 100G
   sudo mkfs.ext4 -Fq /dev/sda4
 }
 
@@ -239,6 +238,10 @@ clone_repos;
 build_all;
 setup_system;
 
+cp -r /nix ${MOUNT_DIR}
+sudo mount --bind ${MOUNT_DIR} /nix
+
 sudo ln -s $(which nix-store) /usr/local/bin/nix-store
 export TERM=linux
+#echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBKKB8ZugyP6a8IYKbx1b3UO6chl7lWf2BoDx0ZSR84B your_email@example.com" >> /root/.ssh/authorized_keys
 record_log "Done Setting up!"
