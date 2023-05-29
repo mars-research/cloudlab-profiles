@@ -56,6 +56,7 @@ install_dependencies() {
 
 create_extfs() {
   record_log "Creating ext4 filesystem on /dev/sda4"
+  sudo resize2fs /dev/sda1 100G
   sudo mkfs.ext4 -Fq /dev/sda4
 }
 
@@ -63,8 +64,8 @@ mountfs() {
   sudo mkdir -p ${MOUNT_DIR}
   sudo mount -t ext4 /dev/sda4 ${MOUNT_DIR}
 
-  sudo mkdir -p /nix
-  sudo mount -t ext4 /dev/sda4 /nix 
+  #sudo mkdir -p /nix
+  #sudo mount -t ext4 /dev/sda4 /nix 
 
   if [[ $? != 0 ]]; then
     record_log "Partition might be corrupted"
