@@ -94,6 +94,11 @@ prepare_local_partition() {
 
 prepare_machine() {
   prepare_local_partition
+
+  mkdir /nix
+  cp -r /nix ${MOUNT_DIR}
+  sudo mount --bind ${MOUNT_DIR}/nix /nix
+
   install_dependencies
 }
 
@@ -238,8 +243,6 @@ clone_repos;
 build_all;
 setup_system;
 
-cp -r /nix ${MOUNT_DIR}
-sudo mount --bind ${MOUNT_DIR} /nix
 
 sudo ln -s $(which nix-store) /usr/local/bin/nix-store
 export TERM=linux
