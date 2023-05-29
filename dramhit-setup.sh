@@ -95,8 +95,8 @@ prepare_local_partition() {
 prepare_machine() {
   prepare_local_partition
 
-  mkdir /nix
-  cp -r /nix ${MOUNT_DIR}
+  sudo mkdir /nix
+  sudo cp -r /nix ${MOUNT_DIR}
   sudo mount --bind ${MOUNT_DIR}/nix /nix
 
   install_dependencies
