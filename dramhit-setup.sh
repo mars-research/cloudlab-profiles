@@ -62,6 +62,8 @@ create_extfs() {
 mountfs() {
   sudo mkdir -p ${MOUNT_DIR}
   sudo mount -t ext4 /dev/sda4 ${MOUNT_DIR}
+
+  sudo mkdir -p /nix
   sudo mount -t ext4 /dev/sda4 /nix 
 
   if [[ $? != 0 ]]; then
