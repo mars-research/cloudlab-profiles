@@ -245,6 +245,5 @@ setup_system;
 
 
 sudo ln -s $(which nix-store) /usr/local/bin/nix-store
-export TERM=linux
-echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBKKB8ZugyP6a8IYKbx1b3UO6chl7lWf2BoDx0ZSR84B your_email@example.com" | sudo tee -a /root/.ssh/authorized_keys
+#export TERM=linux
 record_log "Done Setting up!"
