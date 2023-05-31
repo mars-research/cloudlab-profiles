@@ -104,7 +104,7 @@ prepare_machine() {
 
 # Clone all repos
 clone_incrementer() {
-  if [ ! -d ${MOUNT_DIR}/incrementer ]; then
+  if [ ! -d ${MOUNT_DIR}/dramhit-incrementer ]; then
     record_log "Cloning incrementer"
     pushd ${MOUNT_DIR}
     git clone https://github.com/mars-research/dramhit-incrementer
@@ -195,7 +195,7 @@ clone_repos() {
 ## Build
 build_incrementer() {
   record_log "Building incrementer"
-  pushd ${MOUNT_DIR}/incrementer
+  pushd ${MOUNT_DIR}/dramhit-incrementer
   nix-shell -p cmake gnumake --command "mkdir -p build && cd build; cmake .. && make -j $(nproc)"
   popd
 }
