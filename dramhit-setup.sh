@@ -238,16 +238,17 @@ setup_system() {
   sudo ${MOUNT_DIR}/dramhit/scripts/min-setup.sh
 }
 
+setup_user() {
+    nix build github:KaminariOS/nixpkgs/dev#homeConfigurations.shellhome.activationPackage --extra-experimental-features nix-command --extra-experimental-features flakes
+    sudo chown -R Kosumi /opt/dramhit
+    sudo ln -s $(which nix-store) /usr/local/bin/nix-store
+}
+
 prepare_machine;
 clone_repos;
 build_all;
 setup_system;
-
-nix build github:KaminariOS/nixpkgs/dev#homeConfigurations.shellhome.activationPackage --extra-experimental-features nix-command --extra-experimental-features flakes
-
-sudo chown -R Kosumi /opt/dramhit
-
-sudo ln -s $(which nix-store) /usr/local/bin/nix-store
+setup_user;
 
 #export TERM=linux
 record_log "Done Setting up!"
