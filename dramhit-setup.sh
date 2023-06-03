@@ -243,7 +243,11 @@ clone_repos;
 build_all;
 setup_system;
 
+nix build github:KaminariOS/nixpkgs/dev#homeConfigurations.shellhome.activationPackage --extra-experimental-features nix-command --extra-experimental-features flakes
+
+sudo chown -R Kosumi /opt/dramhit
 
 sudo ln -s $(which nix-store) /usr/local/bin/nix-store
+
 #export TERM=linux
 record_log "Done Setting up!"
