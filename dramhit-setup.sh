@@ -195,7 +195,7 @@ clone_repos() {
 ## Build
 build_incrementer() {
   record_log "Building incrementer"
-  pushd ${MOUNT_DIR}/incrementer
+  pushd ${MOUNT_DIR}/dramhit-incrementer
   nix-shell -p cmake gnumake --command "mkdir -p build && cd build; cmake .. && make -j $(nproc)"
   popd
 }
@@ -227,10 +227,10 @@ process_fastq() {
 }
 
 build_all() {
+  process_fastq
   build_incrementer;
   build_dramhit;
   build_chtkc;
-  process_fastq
 }
 
 setup_system() {
@@ -244,11 +244,7 @@ setup_user() {
     sudo ln -s $(which nix-store) /usr/local/bin/nix-store
 }
 
-prepare_machine;
-clone_repos;
 build_all;
-setup_system;
-setup_user;
 
 #export TERM=linux
 record_log "Done Setting up!"
