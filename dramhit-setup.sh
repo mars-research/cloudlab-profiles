@@ -244,6 +244,10 @@ setup_user() {
     sudo ln -s $(which nix-store) /usr/local/bin/nix-store
 }
 
+prepare_machine;
+clone_repos;
+setup_system;
+setup_user;
 build_all;
 
 #export TERM=linux
