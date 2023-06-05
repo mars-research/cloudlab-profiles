@@ -118,7 +118,7 @@ clone_dramhit() {
   if [ ! -d ${MOUNT_DIR}/dramhit ]; then
     record_log "Cloning dramhit..."
     pushd ${MOUNT_DIR}
-    git clone https://github.com/mars-research/dramhit --recursive
+    git clone https://github.com/KaminariOS/DRAMHiT.git --recursive
     popd;
   else
     record_log "dramhit dir not empty! skipping..."
