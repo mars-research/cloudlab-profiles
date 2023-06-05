@@ -258,10 +258,10 @@ record_log "Clone repos";
 clone_repos;
 record_log "Setting up system";
 setup_system;
-record_log "Setting user stuff";
-setup_user;
 record_log "Build all";
 build_all;
+record_log "Setting user stuff";
+setup_user;
 
 #export TERM=linux
 record_log "Done Setting up!"
