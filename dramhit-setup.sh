@@ -227,9 +227,14 @@ process_fastq() {
 }
 
 build_all() {
-  process_fastq
+
+  record_log "Processing fastq";
+  process_fastq;
+  record_log "Building incrementer";
   build_incrementer;
+  record_log "Building dramhit";
   build_dramhit;
+  record_log "Building chtkc";
   build_chtkc;
 }
 
@@ -239,15 +244,23 @@ setup_system() {
 }
 
 setup_user() {
+
+    record_log "Building flake";
     nix build github:KaminariOS/nixpkgs/dev#homeConfigurations.shellhome.activationPackage --extra-experimental-features nix-command --extra-experimental-features flakes
+    record_log "change own";
     sudo chown -R Kosumi /opt/dramhit
     sudo ln -s $(which nix-store) /usr/local/bin/nix-store
 }
 
+record_log "Prepare_machine";
 prepare_machine;
+record_log "Clone repos";
 clone_repos;
+record_log "Setting up system";
 setup_system;
+record_log "Setting user stuff";
 setup_user;
+record_log "Build all";
 build_all;
 
 #export TERM=linux
