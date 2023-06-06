@@ -246,7 +246,9 @@ setup_system() {
 setup_user() {
 
     record_log "Building flake";
+    pushd /users/Kosumi
     nix build github:KaminariOS/nixpkgs/dev#homeConfigurations.shellhome.activationPackage --extra-experimental-features nix-command --extra-experimental-features flakes
+    popd
     record_log "change own";
     sudo chown -R Kosumi /opt/dramhit
     sudo ln -s $(which nix-store) /usr/local/bin/nix-store
