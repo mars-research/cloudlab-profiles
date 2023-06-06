@@ -118,7 +118,7 @@ clone_dramhit() {
   if [ ! -d ${MOUNT_DIR}/dramhit ]; then
     record_log "Cloning dramhit..."
     pushd ${MOUNT_DIR}
-    git clone https://github.com/KaminariOS/DRAMHiT.git --recursive dramhit
+    git clone https://github.com/mars-research/DRAMHiT.git -b radix-dev --recursive dramhit
     popd;
   else
     record_log "dramhit dir not empty! skipping..."
@@ -243,14 +243,16 @@ setup_system() {
   sudo ${MOUNT_DIR}/dramhit/scripts/min-setup.sh
 }
 
+USERNAME=Kosumi
 setup_user() {
 
     record_log "Building flake";
-    pushd /users/Kosumi
+    sudo mkdir -p /users/Kosumi
+    pushd /users/${USERNAME}
     nix build github:KaminariOS/nixpkgs/dev#homeConfigurations.shellhome.activationPackage --extra-experimental-features nix-command --extra-experimental-features flakes
     popd
     record_log "change own";
-    sudo chown -R Kosumi /opt/dramhit
+    sudo chown -R ${USERNAME} /opt/dramhit
     sudo ln -s $(which nix-store) /usr/local/bin/nix-store
 }
 
