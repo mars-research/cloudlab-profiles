@@ -246,14 +246,11 @@ setup_system() {
 USERNAME=Kosumi
 setup_user() {
 
-    record_log "Building flake";
-    sudo mkdir -p /users/Kosumi
-    pushd /users/${USERNAME}
-    nix build github:KaminariOS/nixpkgs/dev#homeConfigurations.shellhome.activationPackage --extra-experimental-features nix-command --extra-experimental-features flakes
-    popd
     record_log "change own";
     sudo chown -R ${USERNAME} /opt/dramhit
-    sudo ln -s $(which nix-store) /usr/local/bin/nix-store
+    # record_log "Building flake";
+    # nix build github:KaminariOS/nixpkgs/dev#homeConfigurations.shellhome.activationPackage --extra-experimental-features nix-command --extra-experimental-features flakes
+    # sudo ln -s $(which nix-store) /usr/local/bin/nix-store
 }
 
 record_log "Prepare_machine";
