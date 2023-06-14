@@ -90,7 +90,13 @@ prepare_local_partition() {
 }
 
 prepare_machine() {
+  record_log "Prepare_machine";
   prepare_local_partition
+
+  sudo mkdir /nix
+  sudo cp -r /nix ${MOUNT_DIR}
+  sudo mount --bind ${MOUNT_DIR}/nix /nix
+
   install_dependencies
 }
 
@@ -177,6 +183,7 @@ download_sratoolkit() {
 }
 
 clone_repos() {
+  record_log "Clone repos";
   clone_incrementer
   clone_dramhit
   clone_chtkc
@@ -187,7 +194,7 @@ clone_repos() {
 ## Build
 build_incrementer() {
   record_log "Building incrementer"
-  pushd ${MOUNT_DIR}/incrementer
+  pushd ${MOUNT_DIR}/dramhit-incrementer
   nix-shell -p cmake gnumake --command "mkdir -p build && cd build; cmake .. && make -j $(nproc)"
   popd
 }
@@ -219,9 +226,13 @@ process_fastq() {
 }
 
 build_all() {
+  record_log "Building incrementer";
   build_incrementer;
+  record_log "Building dramhit";
   build_dramhit;
+  record_log "Building chtkc";
   build_chtkc;
+  record_log "Processing fastq";
   process_fastq
 }
 
