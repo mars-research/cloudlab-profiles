@@ -63,6 +63,9 @@ mountfs() {
   sudo mkdir -p ${MOUNT_DIR}
   sudo mount -t ext4 /dev/sda4 ${MOUNT_DIR}
 
+  #sudo mkdir -p /nix
+  #sudo mount -t ext4 /dev/sda4 /nix 
+
   if [[ $? != 0 ]]; then
     record_log "Partition might be corrupted"
     create_extfs
@@ -102,7 +105,7 @@ prepare_machine() {
 
 # Clone all repos
 clone_incrementer() {
-  if [ ! -d ${MOUNT_DIR}/incrementer ]; then
+  if [ ! -d ${MOUNT_DIR}/dramhit-incrementer ]; then
     record_log "Cloning incrementer"
     pushd ${MOUNT_DIR}
     git clone https://github.com/mars-research/dramhit-incrementer
@@ -245,4 +248,8 @@ prepare_machine;
 clone_repos;
 build_all;
 setup_system;
+
+
+sudo ln -s $(which nix-store) /usr/local/bin/nix-store
+#export TERM=linux
 record_log "Done Setting up!"
